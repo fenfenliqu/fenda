@@ -1,0 +1,66 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+pic = plt.imread("wm4.png")
+#文件根目录下放同名文件处理，或者改路径
+pic_heigth, pic_width, _ = pic.shape
+
+# 获取图像的高、宽
+
+# gray = 0.2126 * pic[:,:,0] + 0.7152 * pic[:,:,1] + 0.0722 * pic[:,:,2]
+# RGB转灰度图的公式 gray = 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+plt.imshow(pic)  # 显示图片
+plt.show()
+
+
+def rgb2gray(rgb):
+    return np.dot(rgb[..., :3], [0.299, 0.587, 0.114])
+
+
+gray = rgb2gray(pic)
+
+
+def Conv2(img, H, W, kernel, n):
+    # img：输入图片；W,H：图片的宽和高；kernel：卷积核。
+    # return：和输入图像尺寸大小相同的feature map；
+    # 卷积核大小
+    # 卷积大小固定为3*3卷积，这里因为固定了卷积大小，所以写代码前可以直接确定：卷积步长为1，四周个填充一排0
+    col = np.zeros(H)
+    raw = np.zeros(W + 2)
+    img = np.insert(img, W, values=col, axis=1)
+    img = np.insert(img, 0, values=col, axis=1)
+    img = np.insert(img, H, values=raw, axis=0)
+    img = np.insert(img, 0, values=raw, axis=0)
+    res = np.zeros([H, W])  ##直接新建一个全零数组，省去了后边逐步填充数组的麻烦
+    for i in range(H):
+        for j in range(W):
+            temp = img[i:i + n, j:j + n]
+            temp = np.multiply(temp, kernel)
+            res[i][j] = temp.sum()
+
+    return (res)
+
+#自己手动敲的一个卷积核
+core = np.array([[1, 1, 1], [0, 0, 0], [-1, -1, -1]])
+
+
+gray1 = Conv2(gray, pic_heigth, pic_width, core, 3)
+
+print(gray1.shape)
+#这里直接使用了一个间断分类，很暴力，有很大的改进空间
+for j in range(pic_width):
+    for i in range(pic_heigth):
+        if gray1[i, j] > 0.5:
+            gray1[i, j] = 1
+        if gray1[i,j]<=0.5:
+            gray1[i,j] = 0
+
+plt.imshow(gray1, cmap='Greys_r')
+plt.show()
+
+# 也可以用 plt.imshow(gray, cmap = plt.get_cmap('gray'))
+# plt.imshow(gray, cmap='Greys_r')
+
+
