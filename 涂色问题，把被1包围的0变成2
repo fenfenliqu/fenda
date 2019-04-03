@@ -1,0 +1,81 @@
+#include <iostream>
+using namespace std;
+int q[33][33][2];
+int a;
+void fun(int q[33][33][2],int x,int y,int a){
+	if(q[x][y][1]==0&&q[x][y][0]==0){
+
+	q[x][y][1]=3;
+	q[x][y][0]=1;
+	if(x==0&&y==0){
+		fun(q,x+1,y,a);
+		fun(q,x,y+1,a);
+	}
+	if(x==0&&y==a+1){
+		fun(q,x,y+1,a);
+		fun(q,x-1,y,a);			
+	}
+	if(x==0&&y!=0&&y!=a+1){
+		fun(q,x+1,y,a);
+		fun(q,x,y+1,a);
+		fun(q,x,y-1,a);		
+	}	
+	if(x==a+1&&y==0){
+		fun(q,x-1,y,a);
+		fun(q,x,y+1,a);		
+	}
+	if(x==a+1&&y==a+1){
+		fun(q,x,y-1,a);
+		fun(q,x-1,y,a);		
+	}
+	if(x==a+1&&y!=0&&y!=a+1){
+		fun(q,x-1,y,a);
+		fun(q,x,y-1,a);
+		fun(q,x,y+1,a);		
+	}
+	if(x!=0&&x!=a+1&&y==0){
+		fun(q,x,y+1,a);
+		fun(q,x+1,y,a);
+		fun(q,x-1,y,a);
+	}
+	if(x!=0&&x!=a+1&&y==a+1){
+		fun(q,x+1,y,a);
+		fun(q,x-1,y,a);
+		fun(q,x,y-1,a);	
+	}
+	if(x!=0&&x!=a+1&&y!=0&&y!=a+1){
+		fun(q,x+1,y,a);
+		fun(q,x,y+1,a);
+		fun(q,x-1,y,a);
+		fun(q,x,y-1,a);
+	}
+	
+	}
+	return;
+}
+int main(){
+	cin>>a;
+	for(int x=1;x<=a;x++){
+		for(int y=1;y<=a;y++){
+			cin>>q[x][y][1];
+		}
+	}
+	
+	fun(q,0,0,a);
+	
+
+	for(int x=1;x<=a;x++){
+		for(int y=1;y<=a;y++){
+			if(q[x][y][1]==3)
+			cout<<q[x][y][1]-3<<" ";
+			if(q[x][y][1]==1)
+			cout<<q[x][y][1]<<" ";
+			if(q[x][y][1]==0)
+			cout<<q[x][y][1]+2<<" ";
+		}
+		if(x!=a)cout<<endl;
+	}
+	
+	return 0;
+	
+}
